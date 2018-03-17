@@ -36,17 +36,17 @@ def view_entry(slug):
     return render_template('detail.html')
 
 
-@app.route('/entries/edit/slug')
+@app.route('/entries/edit/slug', methods=('GET', 'POST'))
 def edit_entry(slug):
     return render_template('edit.html')
 
 
-@app.route('/entries/delete/slug')
+@app.route('/entries/delete/slug', methods=('GET', 'POST'))
 def del_entry(slug):
     return render_template('edit.html')
 
 
-@app.route('/entry')
+@app.route('/entry', methods=('GET', 'POST'))
 def add_entry():
     return render_template('new.html')
 
