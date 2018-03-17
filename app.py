@@ -33,22 +33,22 @@ def list_entries():
 
 @app.route('/entries/<slug>')
 def view_entry(slug):
-    return render_template('index.html')
+    return render_template('detail.html')
 
 
 @app.route('/entries/edit/slug')
 def edit_entry(slug):
-    return render_template('index.html')
+    return render_template('edit.html')
 
 
 @app.route('/entries/delete/slug')
 def del_entry(slug):
-    return render_template('index.html')
+    return render_template('edit.html')
 
 
 @app.route('/entry')
 def add_entry():
-    return render_template('index.html')
+    return render_template('new.html')
 
 
 if __name__ == '__main__':
