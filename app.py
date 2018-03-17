@@ -9,17 +9,14 @@ app = Flask(__name__)
 
 @app.before_request
 def before_request():
-    """Connecting to peewee db"""
+    """Connect to the database before each request."""
     g.db = models.DATABASE
-    try:
-        g.db.connect()
-    except:
-        pass
+    g.db.connect()
 
 
 @app.after_request
 def after_request(response):
-    """Disconnecting from peewee db"""
+    """Close the database connection after each request."""
     g.db.close()
     return response
 
