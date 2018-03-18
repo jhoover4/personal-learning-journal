@@ -40,27 +40,28 @@ def view_entry(slug):
 
 @app.route('/entry', methods=('GET', 'POST'))
 @app.route('/entries/edit/<slug>', methods=('GET', 'POST'))
-def edit_entry(slug = None):
+def edit_entry(slug = None, title=None):
     if slug:
         entry = models.Entry.get(models.Entry.title == slug)
+        title = 'Edit Entry'
     else:
         entry = models.Entry()
+        title = 'Add Entry'
     form = forms.EntryForm(obj=entry)
 
     if form.validate_on_submit():
         form.populate_obj(entry)
 
-        # entry = models.Entry()
-        # entry.title = form.title.data.title()
-        # entry.time_spent = form.time_spent.data
-        # entry.learned = form.learned.data
-        # entry.resources = form.resources.data
+        entry.title = form.title.data.title()
+        entry.time_spent = form.time_spent.data
+        entry.learned = form.learned.data
+        entry.resources = form.resources.data
 
         entry.save()
 
         return redirect(url_for('view_entry', slug=entry.title))
 
-    return render_template('edit.html', form=form)
+    return render_template('edit.html', form=form, title=title)
 
 
 @app.route('/entries/delete/<slug>', methods=('GET', 'POST'))
