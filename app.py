@@ -1,11 +1,14 @@
-from flask import Flask, g, render_template
+from flask import Flask, g, render_template, redirect, url_for, request
 
+
+import forms
 import models
 
-DEBUG = False
+DEBUG = True
+SECRET = 'ASDF!@#$5%$@#$%fasdf'
 
 app = Flask(__name__)
-
+app.secret_key = SECRET
 
 @app.before_request
 def before_request():
@@ -22,33 +25,60 @@ def after_request(response):
 
 
 @app.route('/')
+@app.route('/list-entries')
 def index():
-    return render_template('index.html')
+    entries = models.Entry().select()
 
-
-@app.route('/entries')
-def list_entries():
-    return render_template('index.html')
+    return render_template('index.html', entries = entries)
 
 
 @app.route('/entries/<slug>')
 def view_entry(slug):
-    return render_template('detail.html')
+    entry = models.Entry.get(models.Entry.title == slug)
+
+    return render_template('detail.html', entry=entry)
 
 
-@app.route('/entries/edit/slug', methods=('GET', 'POST'))
+@app.route('/entries/edit/<slug>', methods=('GET', 'POST'))
 def edit_entry(slug):
-    return render_template('edit.html')
+    entry = models.Entry.get(models.Entry.title == slug)
+    form = forms.EntryForm(entry)
+
+    if form.validate_on_submit():
+        entry = models.Entry()
+        entry.title = form.title.data
+        entry.time_spent = form.time_spent.data
+        entry.learned = form.learned.data
+        entry.resources = form.resources.data
+
+        entry.save()
+
+        return redirect(url_for('entry', slug=entry.title))
+
+    return render_template('edit.html', form=form)
 
 
 @app.route('/entries/delete/slug', methods=('GET', 'POST'))
 def del_entry(slug):
-    return render_template('edit.html')
+    return render_template('edit.html', form=form)
 
 
 @app.route('/entry', methods=('GET', 'POST'))
 def add_entry():
-    return render_template('new.html')
+    form = forms.EntryForm()
+
+    if form.validate_on_submit():
+        entry = models.Entry()
+        entry.title = form.title.data
+        entry.time_spent = form.time_spent.data
+        entry.learned = form.learned.data
+        entry.resources = form.resources.data
+
+        entry.save()
+
+        return redirect(url_for('entry', slug=entry.title))
+
+    return render_template('new.html', form=form)
 
 
 if __name__ == '__main__':

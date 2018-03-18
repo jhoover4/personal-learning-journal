@@ -1,4 +1,4 @@
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms.validators import DataRequired, ValidationError
 
@@ -10,17 +10,25 @@ def title_exists(form, field):
         raise ValidationError("Sorry, posts can't share titles!")
 
 
-class EntryForm(Form):
+class EntryForm(FlaskForm):
     title = StringField(
-        'title',
+        'Title',
         validators=[
             DataRequired(),
             title_exists,
         ])
     time_spent = StringField(
-        'timeSpent',
+        'Time Spent',
         validators=[
             DataRequired(),
         ])
-    learned = StringField('whatILearned')
-    resources = StringField('ResourcesToRemember')
+    learned = StringField(
+        'What I Learned',
+        validators=[
+            DataRequired(),
+        ])
+    resources = StringField(
+        'Resources To Remember',
+        validators=[
+            DataRequired(),
+        ])
