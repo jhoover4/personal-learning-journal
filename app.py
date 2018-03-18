@@ -38,47 +38,37 @@ def view_entry(slug):
 
     return render_template('detail.html', entry=entry)
 
-
-@app.route('/entries/edit/<slug>', methods=('GET', 'POST'))
-def edit_entry(slug):
-    entry = models.Entry.get(models.Entry.title == slug)
-    form = forms.EntryForm(entry)
-
-    if form.validate_on_submit():
-        entry = models.Entry()
-        entry.title = form.title.data
-        entry.time_spent = form.time_spent.data
-        entry.learned = form.learned.data
-        entry.resources = form.resources.data
-
-        entry.save()
-
-        return redirect(url_for('entry', slug=entry.title))
-
-    return render_template('edit.html', form=form)
-
-
-@app.route('/entries/delete/slug', methods=('GET', 'POST'))
-def del_entry(slug):
-    return render_template('edit.html', form=form)
-
-
 @app.route('/entry', methods=('GET', 'POST'))
-def add_entry():
-    form = forms.EntryForm()
+@app.route('/entries/edit/<slug>', methods=('GET', 'POST'))
+def edit_entry(slug = None):
+    if slug:
+        entry = models.Entry.get(models.Entry.title == slug)
+    else:
+        entry = models.Entry()
+    form = forms.EntryForm(obj=entry)
 
     if form.validate_on_submit():
-        entry = models.Entry()
-        entry.title = form.title.data
-        entry.time_spent = form.time_spent.data
-        entry.learned = form.learned.data
-        entry.resources = form.resources.data
+        form.populate_obj(entry)
+
+        # entry = models.Entry()
+        # entry.title = form.title.data.title()
+        # entry.time_spent = form.time_spent.data
+        # entry.learned = form.learned.data
+        # entry.resources = form.resources.data
 
         entry.save()
 
-        return redirect(url_for('entry', slug=entry.title))
+        return redirect(url_for('view_entry', slug=entry.title))
 
-    return render_template('new.html', form=form)
+    return render_template('edit.html', form=form)
+
+
+@app.route('/entries/delete/<slug>', methods=('GET', 'POST'))
+def del_entry(slug):
+    entry = models.Entry.get(models.Entry.title == slug)
+    entry.delete_instance()
+
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':

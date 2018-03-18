@@ -32,3 +32,8 @@ class EntryForm(FlaskForm):
         validators=[
             DataRequired(),
         ])
+    tags = StringField(
+        'Resources To Remember',
+        validators=[
+            DataRequired(),
+        ])

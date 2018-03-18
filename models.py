@@ -3,9 +3,12 @@ from peewee import *
 
 DATABASE = SqliteDatabase('entries.db')
 
+class Tag(Model):
+    """For associating different entries by tag."""
+    name = CharField()
 
 class Entry(Model):
-    """title, date, time spent, what you learned, and resources to remember"""
+    """title, date, time spent, what you learned, and resources to remember."""
 
     date_created = DateTimeField(default=datetime.now)
     title = CharField(unique=True)
@@ -17,8 +20,18 @@ class Entry(Model):
         database = DATABASE
         order_by = ('-date_created',)
 
+class Course(Model):
+    name = CharField()
+
+class TagList(Model):
+    """For many to many relationship between tags and entries."""
+
+    student = ForeignKeyField(Tag)
+    course = ForeignKeyField(Entry)
 
 class User(Model):
+    """Protection for editing entries"""
+
     date_created = DateTimeField(default=datetime.now)
     username = CharField(unique=True)
     password = CharField(max_length=100)
