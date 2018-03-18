@@ -23,11 +23,17 @@ class Entry(Model):
 class Course(Model):
     name = CharField()
 
+    class Meta:
+        database = DATABASE
+
 class TagList(Model):
     """For many to many relationship between tags and entries."""
 
     student = ForeignKeyField(Tag)
     course = ForeignKeyField(Entry)
+
+    class Meta:
+        database = DATABASE
 
 class User(Model):
     """Protection for editing entries"""
@@ -36,6 +42,8 @@ class User(Model):
     username = CharField(unique=True)
     password = CharField(max_length=100)
 
+    class Meta:
+        database = DATABASE
 
 def initialize_db():
     DATABASE.connect()
