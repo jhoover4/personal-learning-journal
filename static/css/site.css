@@ -130,7 +130,11 @@ ul li a {
 	text-decoration: none;
 }
 
-
+ /* Added by Jordan */
+.heading {
+    margin-bottom: 2em;
+    text-align: center;
+}
 
 /* ==========================================================================
    Page Styles

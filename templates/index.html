@@ -6,10 +6,11 @@
 <section>
     <div class="container">
         <div class="entry-list">
+            <h1 class="heading">All Entries</h1>
             {% for entry in entries %}
             <article>
                 <h2><a href="{{ url_for('view_entry', slug=entry.title) }}">{{ entry.title }}</a></h2>
-                <time datetime="{{ entry.date_created.strftime('%Y-%m%-%d') }}">{{ entry.date_created.strftime('%B, %d %Y') }}</time>
+                <time datetime="{{ entry.date_created.strftime('%Y-%m%-%d') }}">{{ entry.date_created.strftime('%B %d, %Y') }}</time>
                 <p>
                     Tags:
                     {% for tag in entry.tags %}

@@ -12,6 +12,10 @@ app = Flask(__name__)
 app.secret_key = SECRET
 
 
+# TODO: Sort forms by newest to oldest in index correctly
+# TODO: Implement User Auth
+# TODO: Implement Tag-list delete
+
 @app.before_request
 def before_request():
     """Connect to the database before each request."""
@@ -81,6 +85,7 @@ def edit_entry(slug=None):
         form.populate_obj(entry)
 
         entry.title = form.title.data.title()
+        entry.date_created = form.date_created.data
         entry.time_spent = form.time_spent.data
         entry.learned = form.learned.data
         entry.resources = form.resources.data
@@ -115,8 +120,11 @@ def del_entry(slug):
 
     try:
         tag_lists = models.TagList.get(entry=entry)
-        for ls in tag_lists:
-            ls.delete_instance()
+        if len(tag_lists) > 1:
+            for ls in tag_lists:
+                ls.delete_instance()
+        else:
+            tag_lists[0].delete_instance()
     except models.DoesNotExist:
         pass
 

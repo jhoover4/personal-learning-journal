@@ -28,7 +28,7 @@ class Entry(BaseModel):
     resources = TextField()
 
     class Meta:
-        order_by = ('-date_created',)
+        order_by = ('date_created',)
 
 
 class TagList(BaseModel):

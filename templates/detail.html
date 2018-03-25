@@ -13,18 +13,19 @@
                 </time>
                 <div class="entry">
                     <h3>Time Spent: </h3>
-                    <p>{{entry.time_spent}}</p>
+                    <p>{{ entry.time_spent }} Hours</p>
                 </div>
                 <div class="entry">
                     <h3>What I Learned:</h3>
-                    {{entry.learned}}
+                    <p>{{ entry.learned }}</p>
                 </div>
                 <div class="entry">
                     <h3>Resources to Remember:</h3>
-                    {{entry.resources}}
+                    <p>{{ entry.resources }}</p>
                 </div>
                 <div class="entry">
                     <h3>Tags:</h3>
+                    <p>
                     {% for tag in entry.tags %}
                         {% if not loop.last %}
                             {{ tag.title() }},
@@ -32,6 +33,7 @@
                             {{ tag.title() }}
                         {% endif %}
                     {% endfor %}
+                    </p>
                 </div>
             </article>
         </div>
