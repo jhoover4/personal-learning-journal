@@ -10,15 +10,20 @@
                 <h2>{{ title }}</h2>
                 {{ form.csrf_token }}
                 {% for field in form %}
-                    {% if field.errors %}
-                        <ul class=errors>
-                        {% for error in field.errors %}
-                        <li>{{ error }}</li>
-                        {% endfor %}
-                        </ul>
-                    {% endif %}
-                {{ field.label }}
-                {{ field }}
+                {% if field.errors %}
+                <ul class=errors>
+                    {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% if field.name == "tags" %}
+                    {{ field.label }}
+                    {{ form.tags(value=tags) }}
+                {% else %}
+                    {{ field.label }}
+                    {{ field }}
+                {% endif %}
                 {% endfor %}
                 <input type="submit" value="Publish Entry" class="button">
                 <a href="{{ url_for('index') }}" class="button button-secondary">Cancel</a>

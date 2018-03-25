@@ -1,25 +1,16 @@
 {% extends 'layout.html' %}
 
-{% block title %}MyJournal{% endblock %}
+{% block title %}{{ tag }}{% endblock %}
 
 {% block content %}
 <section>
     <div class="container">
         <div class="entry-list">
+            <h1> Entries for {{ tag.title() }}</h1>
             {% for entry in entries %}
             <article>
                 <h2><a href="{{ url_for('view_entry', slug=entry.title) }}">{{ entry.title }}</a></h2>
                 <time datetime="{{ entry.date_created.strftime('%Y-%m%-%d') }}">{{ entry.date_created.strftime('%B, %d %Y') }}</time>
-                <p>
-                    Tags:
-                    {% for tag in entry.tags %}
-                        {% if not loop.last %}
-                        <a href="{{ url_for('tag_list', tag=tag) }}">{{ tag.title() }}</a>,
-                        {% else %}
-                        <a href="{{ url_for('tag_list', tag=tag) }}">{{ tag.title() }}</a>
-                        {% endif %}
-                    {% endfor %}
-                </p>
             </article>
             {% endfor %}
         </div>

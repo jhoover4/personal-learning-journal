@@ -15,7 +15,7 @@ class EntryForm(FlaskForm):
         'Title',
         validators=[
             DataRequired(),
-            title_exists,
+            # title_exists,
         ])
     time_spent = StringField(
         'Time Spent',

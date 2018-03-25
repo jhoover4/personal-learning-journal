@@ -1,7 +1,6 @@
 import re
 
-from flask import Flask, g, render_template, redirect, url_for, request
-
+from flask import Flask, g, render_template, redirect, url_for
 
 import forms
 import models
@@ -11,6 +10,7 @@ SECRET = 'ASDF!@#$5%$@#$%fasdf'
 
 app = Flask(__name__)
 app.secret_key = SECRET
+
 
 @app.before_request
 def before_request():
@@ -33,10 +33,10 @@ def index():
 
     for entry in entries:
         tag_query = (models.Tag
-               .select()
-               .join(models.TagList)
-               .join(models.Entry)
-               .where(models.Entry.title == entry.title))
+                     .select()
+                     .join(models.TagList)
+                     .join(models.Entry)
+                     .where(models.Entry.title == entry.title))
 
         entry.tags = [tag.name for tag in tag_query]
 
@@ -48,31 +48,35 @@ def view_entry(slug):
     entry = models.Entry.get(models.Entry.title == slug)
 
     tag_query = (models.Tag
-           .select()
-           .join(models.TagList)
-           .join(models.Entry)
-           .where(models.Entry.title == entry.title))
+                 .select()
+                 .join(models.TagList)
+                 .join(models.Entry)
+                 .where(models.Entry.title == entry.title))
 
     entry.tags = [tag.name for tag in tag_query]
 
     return render_template('detail.html', entry=entry)
 
+
 @app.route('/entry', methods=('GET', 'POST'))
 @app.route('/entries/edit/<slug>', methods=('GET', 'POST'))
-def edit_entry(slug = None, title=None):
+def edit_entry(slug=None):
     if slug:
         entry = models.Entry.get(models.Entry.title == slug)
-        tags = (models.Tag
-               .select()
-               .join(models.TagList)
-               .join(models.Entry)
-               .where(models.Entry.title == entry.title))
+        tag_query = (models.Tag
+                     .select()
+                     .join(models.TagList)
+                     .join(models.Entry)
+                     .where(models.Entry.title == entry.title))
         title = 'Edit Entry'
     else:
         entry = models.Entry()
-        tags = []
+        tag_query = []
         title = 'Add Entry'
+
     form = forms.EntryForm(obj=entry)
+    tags = ", ".join([tag.name.title() for tag in tag_query])
+
     if form.validate_on_submit():
         form.populate_obj(entry)
 
@@ -83,14 +87,22 @@ def edit_entry(slug = None, title=None):
 
         entry.save()
 
+        # Delete all tag lists already associated with model so data can overwrite
+        tag_list_query = (models.TagList
+                          .select()
+                          .join(models.Entry)
+                          .where(models.Entry.title == entry.title))
+        for ls in tag_list_query:
+            ls.delete_instance()
+
+        # Create new tags if needed
         for tag in re.split(r'[\s,]+', form.tags.data):
             try:
-                new_tag = models.Tag.get(models.Tag.name == tag)
-                models.TagList.create(tag=new_tag, entry=entry)
-                tags.append(new_tag)
-            except:
-                new_tag = models.Tag.create(name=tag)
-                models.TagList.create(tag=new_tag, entry=entry)
+                new_tag = models.Tag.get(models.Tag.name == tag.title())
+            except models.DoesNotExist:
+                new_tag = models.Tag.create(name=tag.title())
+
+            models.TagList.create(tag=new_tag, entry=entry)
 
         return redirect(url_for('view_entry', slug=entry.title))
 
@@ -100,9 +112,28 @@ def edit_entry(slug = None, title=None):
 @app.route('/entries/delete/<slug>', methods=('GET', 'POST'))
 def del_entry(slug):
     entry = models.Entry.get(models.Entry.title == slug)
+
+    try:
+        tag_lists = models.TagList.get(entry=entry)
+        for ls in tag_lists:
+            ls.delete_instance()
+    except models.DoesNotExist:
+        pass
+
     entry.delete_instance()
 
     return redirect(url_for('index'))
+
+
+@app.route('/tags/<tag>')
+def tag_list(tag):
+    entries = (models.Entry
+               .select()
+               .join(models.TagList)
+               .join(models.Tag)
+               .where(models.Tag.name == tag))
+
+    return render_template('tag_list.html', entries=entries, tag=tag)
 
 
 if __name__ == '__main__':
