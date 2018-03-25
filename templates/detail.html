@@ -23,6 +23,16 @@
                     <h3>Resources to Remember:</h3>
                     {{entry.resources}}
                 </div>
+                <div class="entry">
+                    <h3>Tags:</h3>
+                    {% for tag in entry.tags %}
+                        {% if not loop.last %}
+                            {{ tag.title() }},
+                        {% else %}
+                            {{ tag.title() }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </article>
         </div>
     </div>

@@ -10,6 +10,16 @@
             <article>
                 <h2><a href="{{ url_for('view_entry', slug=entry.title) }}">{{ entry.title }}</a></h2>
                 <time datetime="{{ entry.date_created.strftime('%Y-%m%-%d') }}">{{ entry.date_created.strftime('%B, %d %Y') }}</time>
+                <p>
+                    Tags:
+                    {% for tag in entry.tags %}
+                        {% if not loop.last %}
+                            {{ tag.title() }},
+                        {% else %}
+                            {{ tag.title() }}
+                        {% endif %}
+                    {% endfor %}
+                </p>
             </article>
             {% endfor %}
         </div>
