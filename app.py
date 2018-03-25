@@ -12,9 +12,9 @@ app = Flask(__name__)
 app.secret_key = SECRET
 
 
-# TODO: Sort forms by newest to oldest in index correctly
 # TODO: Implement User Auth
 # TODO: Implement Tag-list delete
+# TODO: Fix title capitlization on conjunctions
 
 @app.before_request
 def before_request():
@@ -33,7 +33,7 @@ def after_request(response):
 @app.route('/')
 @app.route('/list-entries')
 def index():
-    entries = models.Entry.select()
+    entries = models.Entry.select().order_by(-models.Entry.date_created)
 
     for entry in entries:
         tag_query = (models.Tag
@@ -139,7 +139,7 @@ def tag_list(tag):
                .select()
                .join(models.TagList)
                .join(models.Tag)
-               .where(models.Tag.name == tag))
+               .where(models.Tag.name == tag)).order_by(-models.Entry.date_created)
 
     return render_template('tag_list.html', entries=entries, tag=tag)
 
