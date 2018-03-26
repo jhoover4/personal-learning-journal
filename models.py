@@ -1,6 +1,8 @@
 from datetime import datetime
 from peewee import *
 
+from flask.ext.login import UserMixin
+
 DATABASE = SqliteDatabase('entries.db')
 
 
@@ -38,7 +40,7 @@ class TagList(BaseModel):
     entry = ForeignKeyField(Entry)
 
 
-class User(BaseModel):
+class User(BaseModel, UserMixin):
     """Protection for editing entries."""
 
     date_created = DateTimeField(default=datetime.now)

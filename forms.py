@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, DateField
+from wtforms import StringField, TextAreaField, DateField, PasswordField
 from wtforms.validators import DataRequired, ValidationError
 
 from models import Entry
@@ -41,3 +41,16 @@ class EntryForm(FlaskForm):
     tags = StringField(
         'Tags',
     )
+
+
+class LoginForm(FlaskForm):
+    username = StringField(
+        'Username',
+        validators=[
+            DataRequired(),
+        ])
+    password = PasswordField(
+        'Password',
+        validators=[
+            DataRequired(),
+        ])

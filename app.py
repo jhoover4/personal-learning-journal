@@ -1,6 +1,8 @@
 import re
 
-from flask import Flask, g, render_template, redirect, url_for
+from flask import Flask, g, render_template, redirect, url_for, request, flash, abort
+from flask_login import LoginManager, login_user, logout_user, login_required
+
 
 import forms
 import models
@@ -11,8 +13,10 @@ SECRET = 'ASDF!@#$5%$@#$%fasdf'
 app = Flask(__name__)
 app.secret_key = SECRET
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
-# TODO: Implement User Auth
 # TODO: Implement Tag-list delete
 # TODO: Fix title capitlization on conjunctions
 
@@ -32,6 +36,7 @@ def after_request(response):
 
 @app.route('/')
 @app.route('/list-entries')
+@login_required
 def index():
     entries = models.Entry.select().order_by(-models.Entry.date_created)
 
@@ -48,6 +53,7 @@ def index():
 
 
 @app.route('/entries/<slug>')
+@login_required
 def view_entry(slug):
     entry = models.Entry.get(models.Entry.title == slug)
 
@@ -64,6 +70,7 @@ def view_entry(slug):
 
 @app.route('/entry', methods=('GET', 'POST'))
 @app.route('/entries/edit/<slug>', methods=('GET', 'POST'))
+@login_required
 def edit_entry(slug=None):
     if slug:
         entry = models.Entry.get(models.Entry.title == slug)
@@ -115,6 +122,7 @@ def edit_entry(slug=None):
 
 
 @app.route('/entries/delete/<slug>', methods=('GET', 'POST'))
+@login_required
 def del_entry(slug):
     entry = models.Entry.get(models.Entry.title == slug)
 
@@ -134,6 +142,7 @@ def del_entry(slug):
 
 
 @app.route('/tags/<tag>')
+@login_required
 def tag_list(tag):
     entries = (models.Entry
                .select()
@@ -142,6 +151,29 @@ def tag_list(tag):
                .where(models.Tag.name == tag)).order_by(-models.Entry.date_created)
 
     return render_template('tag_list.html', entries=entries, tag=tag)
+
+
+@login_manager.user_loader
+def load_user(userid):
+    try:
+        return models.User.get(models.User.id == userid)
+    except models.DoesNotExist:
+        return None
+
+
+@app.route('/login', methods=('GET', 'POST'))
+def login():
+    form = forms.LoginForm()
+    if form.validate_on_submit():
+        try:
+            user = models.User.get(models.User.username == form.username.data)
+        except models.DoesNotExist:
+            flash("Your username or password doesn't match!", "error")
+        else:
+            login_user(user)
+
+            return redirect(url_for('index'))
+    return render_template('login.html', form=form)
 
 
 if __name__ == '__main__':
