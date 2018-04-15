@@ -39,7 +39,7 @@ class EntryForm(FlaskForm):
             DataRequired(),
         ])
     tags = StringField(
-        'Tags',
+        'Tags (Seperate each tag by a comma)',
     )
 
 

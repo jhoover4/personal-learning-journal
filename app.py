@@ -1,7 +1,7 @@
 import re
 
-from flask import Flask, g, render_template, redirect, url_for, request, flash, abort
-from flask_login import LoginManager, login_user, logout_user, login_required
+from flask import Flask, g, render_template, redirect, url_for, flash
+from flask_login import LoginManager, login_user, login_required
 
 
 import forms
@@ -19,6 +19,8 @@ login_manager.login_view = 'login'
 
 # TODO: Implement Tag-list delete
 # TODO: Fix title capitlization on conjunctions
+# TODO: Add 404 handling
+# TODO: RE check for commas
 
 @app.before_request
 def before_request():
@@ -174,6 +176,11 @@ def login():
 
             return redirect(url_for('index'))
     return render_template('login.html', form=form)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 
 if __name__ == '__main__':

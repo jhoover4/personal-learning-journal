@@ -228,6 +228,11 @@ form textarea:hover {
 input[type=submit] {
 	margin-right: 5px;
 }
+.error-page article {
+   text-align: center;
+   margin: 0 auto;
+   margin-bottom: 5%;
+}
 
 
 
