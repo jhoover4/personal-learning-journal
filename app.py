@@ -8,7 +8,7 @@ from flask_login import LoginManager, login_user, login_required
 import forms
 import models
 
-DEBUG = True
+DEBUG = False
 SECRET = 'ASDF!@#$5%$@#$%fasdf'
 
 app = Flask(__name__)
@@ -17,8 +17,6 @@ app.secret_key = SECRET
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-
-# TODO: RE check for commas
 
 
 @app.before_request
@@ -110,10 +108,12 @@ def edit_entry(slug=None):
 
         # Create new tags if needed
         for tag in re.split(r'[\s,]+', form.tags.data):
+            tag_name = tag.replace(",", "").title()
+
             try:
-                new_tag = models.Tag.get(models.Tag.name == tag.title())
+                new_tag = models.Tag.get(models.Tag.name == tag_name)
             except models.DoesNotExist:
-                new_tag = models.Tag.create(name=tag.title())
+                new_tag = models.Tag.create(name=tag_name)
 
             models.TagList.create(tag=new_tag, entry=entry)
 
