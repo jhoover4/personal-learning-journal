@@ -1,4 +1,5 @@
 import re
+import string
 
 from flask import Flask, g, render_template, redirect, url_for, flash
 from flask_login import LoginManager, login_user, login_required
@@ -17,10 +18,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# TODO: Implement Tag-list delete
-# TODO: Fix title capitlization on conjunctions
-# TODO: Add 404 handling
 # TODO: RE check for commas
+
 
 @app.before_request
 def before_request():
@@ -75,7 +74,7 @@ def view_entry(slug):
 @login_required
 def edit_entry(slug=None):
     if slug:
-        entry = models.Entry.get(models.Entry.title == slug)
+        entry = models.Entry.get(models.Entry.title == string.capwords(slug))
         tag_query = (models.Tag
                      .select()
                      .join(models.TagList)
@@ -93,7 +92,7 @@ def edit_entry(slug=None):
     if form.validate_on_submit():
         form.populate_obj(entry)
 
-        entry.title = form.title.data.title()
+        entry.title = string.capwords(form.title.data)
         entry.date_created = form.date_created.data
         entry.time_spent = form.time_spent.data
         entry.learned = form.learned.data
@@ -129,12 +128,9 @@ def del_entry(slug):
     entry = models.Entry.get(models.Entry.title == slug)
 
     try:
-        tag_lists = models.TagList.get(entry=entry)
-        if len(tag_lists) > 1:
-            for ls in tag_lists:
-                ls.delete_instance()
-        else:
-            tag_lists[0].delete_instance()
+        models.TagList.delete().where(
+            (models.TagList.entry == entry)
+        ).execute()
     except models.DoesNotExist:
         pass
 
@@ -179,7 +175,7 @@ def login():
 
 
 @app.errorhandler(404)
-def page_not_found(e):
+def page_not_found():
     return render_template('404.html'), 404
 
 
