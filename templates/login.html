@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block title %}MyJournal{% endblock %}
+
+{% block content %}
+<section>
+    <div class="container">
+        <div class="edit-entry user-form">
+            <form method="POST" action="">
+                <h1>Access Restricted</h1>
+                <p>Please login to view the site</p>
+                {{ form.hidden_tag() }}
+                {% for field in form %}
+                {% if field.errors %}
+                <ul class=errors>
+                    {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% if field.widget.input_type != 'hidden' %} {{ field.label }} {% endif %}
+                {{ field }}
+                {% endfor %}
+                <input type="submit" value="Login" class="button">
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock content %}

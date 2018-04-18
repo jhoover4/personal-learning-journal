@@ -8,7 +8,7 @@ from flask_login import LoginManager, login_user, login_required
 import forms
 import models
 
-DEBUG = False
+DEBUG = True
 SECRET = 'ASDF!@#$5%$@#$%fasdf'
 
 app = Flask(__name__)
