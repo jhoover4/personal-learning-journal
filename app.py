@@ -23,7 +23,7 @@ login_manager.login_view = 'login'
 def before_request():
     """Connect to the database before each request."""
     g.db = models.DATABASE
-    g.db.connect()
+    g.db.connect(reuse_if_open=True)
 
 
 @app.after_request
@@ -175,7 +175,7 @@ def login():
 
 
 @app.errorhandler(404)
-def page_not_found():
+def page_not_found(e):
     return render_template('404.html'), 404
 
 
