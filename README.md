@@ -2,9 +2,9 @@
 
 This is the fifth project in Treehouse Python tech degree.
 
-To use run app.py.
+To use locally, run clone and run app.py. A hosted version can be found on [Heroku](https://personal-learning-journal.herokuapp.com/list-entries).
 
-Project will be hosted on Heroku in future commits.
+Credentials to enter are un: root, pw: root.
 
 ## Description
 
