@@ -1,18 +1,13 @@
 import re
 import string
-
 from flask import Flask, g, render_template, redirect, url_for, flash
 from flask_login import LoginManager, login_user, login_required
-
 
 import forms
 import models
 
-DEBUG = True
-SECRET = 'ASDF!@#$5%$@#$%fasdf'
-
 app = Flask(__name__)
-app.secret_key = SECRET
+app.config.from_object('default_settings')
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -180,4 +175,4 @@ def page_not_found(e):
 
 
 if __name__ == '__main__':
-    app.run(debug=DEBUG)
+    app.run()
